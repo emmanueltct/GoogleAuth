@@ -20,7 +20,7 @@ class User extends Model <UserAttributes,UserInput>implements UserAttributes{
   public id!:number;
   public names!:string;
   public email!:string;
-  public profil!:string;
+  public profile!:string;
   public googleId!:string;
   public createdAt!:Date;
   public updatedAt!:Date;
