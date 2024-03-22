@@ -6,7 +6,7 @@ interface UPDATEDATA{
     name:string,
     profile:string
 }
-const mailNotification=(userData:Optional<UPDATEDATA,'name'&'profile'>,email:string)=>{
+const mailNotification= async (userData:Optional<UPDATEDATA,'name'&'profile'>,email:string)=>{
 
 
 const transporter = nodemailer.createTransport({
@@ -33,12 +33,17 @@ if(userData.profile){
     <p> You have updated the following information :<br/> <b>${message}<br/>Thank you</b> </p>`
   };
   
-  transporter.sendMail(mailOptions, function(error: Error | null, info: nodemailer.SentMessageInfo){
+   await transporter.sendMail(mailOptions, function(error: Error | null, info: nodemailer.SentMessageInfo){
     if (error) {
       console.log(error);
+     
     } else {
+     
       console.log('Email sent: ' + info.response);
+      
     }
+  
   });
+//return res.status(200).json("message sent succefully");
 }
   export  default mailNotification
