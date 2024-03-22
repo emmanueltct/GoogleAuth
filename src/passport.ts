@@ -1,6 +1,5 @@
 import passport from 'passport';
 import  {Strategy as GoogleStrategy} from 'passport-google-oauth20'
-import { Strategy as JWTstrategy, ExtractJwt as ExtractJWT } from 'passport-jwt';
 import dotenv from 'dotenv';
 import Jwt from 'jsonwebtoken'
 
