@@ -1,3 +1,5 @@
+
+import mailNotification from '../notification/notification';
 import express, { Request, Response } from 'express';
 import User from '../models/user';
 import nodemailer from 'nodemailer'; 
@@ -8,7 +10,6 @@ import cloudinary from '../config/cloudinary';
 const userProfile = async (req: Request, res: Response) => {
  // console.log("show me");
 const user1= await User.findOne({where:{id:1}});
-
 
   try {
     if(user1){
@@ -32,17 +33,30 @@ const user1= await User.findOne({where:{id:1}});
 };
 
 
+
 const updateProfile = async (req: Request, res: Response) => {
+
   try {
 
-    const { names} = req.body;
- console.log(req.body)
+    
+    const userData={
+      name:'',
+      profile:'',
+  }
+// console.log(req.body)
     // Static ID for testing (replace with your desired static ID)
     const staticUserId = 1;
 
     const user = await User.findByPk(staticUserId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
+    }
+
+
+    if(req.body.names){
+
+      user.names = req.body.names;
+      userData.name=req.body.names;
     }
 
     // Check if there is a file uploaded
@@ -57,8 +71,8 @@ const updateProfile = async (req: Request, res: Response) => {
       });
 
       // Update user's names, profile image URL, and keep existing profile info
-      user.names = names;
       user.profile = result.secure_url; // Store the Cloudinary URL
+      userData.profile=result.secure_url;
 
       // Delete old image from Cloudinary if it exists
       if (oldProfile) {
@@ -69,16 +83,14 @@ const updateProfile = async (req: Request, res: Response) => {
           console.error('Error deleting old image from Cloudinary:', deleteError);
         }
       }
-    } else {
-      // If no file was uploaded, update user's names
-      user.names = names;
     }
-
     // Save updated user data
     await user.save();
-    
+  
+   const email= user.email;
+   const userNotification= await mailNotification(userData,email);
+  
 
-    // Respond with success message
     return res.status(200).json({ message: 'Profile updated successfully', user });
 
   } catch (error) {
@@ -90,31 +102,6 @@ const updateProfile = async (req: Request, res: Response) => {
 
 
 
-const notifyProfileUpdate = async (email: string) => {
-  // Implement your email notification logic here
-  // Example using nodemailer
-  /*
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER || 'your_email@gmail.com',
-      pass: process.env.EMAIL_PASS || 'your_password',
-    },
-  });
 
-  try {
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER || 'your_email@gmail.com',
-      to: email,
-      subject: 'Profile Update Notification',
-      text: 'Your profile has been successfully updated.',
-    });
-
-    console.log('Profile update notification sent');
-  } catch (error) {
-    console.error('Error sending email:', error);
-  }
-  */
-};
 
 export { userProfile, updateProfile };
