@@ -1,9 +1,9 @@
 import{DataTypes,Model,Optional} from "sequelize"
-import sequelizeConnection  from "../db/dbCongig";
+import {sequelizeConnection } from "../db/dbCongig";
 
 
 interface UserAttributes{
-  id?:number,
+  id?:string,
   names?:string
   email?:string
   profile?:string
@@ -17,7 +17,7 @@ export interface UserInput extends Optional <UserAttributes,'id'>{}
 export interface UserOutPuts extends Required<UserAttributes>{}
 
 class User extends Model <UserAttributes,UserInput>implements UserAttributes{
-  public id!:number;
+  public id!:string;
   public names!:string;
   public email!:string;
   public profile!:string;
@@ -30,9 +30,10 @@ class User extends Model <UserAttributes,UserInput>implements UserAttributes{
   User.init({
     id:{
       allowNull:false,
-      autoIncrement:true,
+      autoIncrement:false,
       primaryKey:true,
-      type:DataTypes.BIGINT
+      type:DataTypes.UUID,
+      defaultValue:DataTypes.UUIDV4
     },
     names: {
        allowNull:false,
@@ -40,7 +41,8 @@ class User extends Model <UserAttributes,UserInput>implements UserAttributes{
     },
     email: {
       allowNull:false,
-       type:DataTypes.STRING
+      type:DataTypes.STRING,
+      unique:true
     },
     profile: {
       allowNull:false,
@@ -48,7 +50,8 @@ class User extends Model <UserAttributes,UserInput>implements UserAttributes{
     },
     googleId: {
       allowNull:false,
-       type:DataTypes.STRING
+      type:DataTypes.STRING,
+      unique:true
     },
   }, {
     timestamps:true,
